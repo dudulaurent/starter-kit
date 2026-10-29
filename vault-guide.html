@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vault Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky tab bar, one view at a time, cards and diagrams scale to phone width. */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --fg:#14201d; --muted:#5a6a66; --line:#d3dcd9;
+  --accent:#0f6b5c; --accent-soft:#d9eee9; --warm:#c2571a; --warm-soft:#fbe6d8;
+  --peer:#3b4fa0; --peer-soft:#e1e5f6; --retired:#8a8f8d;
+  --font-display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --font-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1614; --surface:#16211e; --fg:#e6efec; --muted:#98aaa5; --line:#2a3a36;
+  --accent:#4fc4ac; --accent-soft:#17342e; --warm:#f09a62; --warm-soft:#3a2415;
+  --peer:#9fb0ff; --peer-soft:#1c2347; --retired:#7a8582; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1614; --surface:#16211e; --fg:#e6efec; --muted:#98aaa5; --line:#2a3a36;
+  --accent:#4fc4ac; --accent-soft:#17342e; --warm:#f09a62; --warm-soft:#3a2415;
+  --peer:#9fb0ff; --peer-soft:#1c2347; --retired:#7a8582; color-scheme:dark}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1040px;margin-inline:auto}
+header{padding-block:28px 12px}
+h1{font-family:var(--font-display);font-size:clamp(30px,6vw,46px);line-height:1.05;margin:0;letter-spacing:-.02em;text-wrap:balance}
+.sub{color:var(--muted);margin:8px 0 0;max-width:62ch}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+nav button{font:500 14px var(--font-body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 16px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+nav button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section.view{display:none;padding-block:24px}
+section.view.on{display:block}
+h2{font-family:var(--font-display);font-size:26px;margin:0 0 6px;letter-spacing:-.01em}
+p.lead{color:var(--muted);margin:0 0 20px;max-width:68ch}
+figure{margin:0 0 16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+.scroll{overflow-x:auto}
+svg{display:block;width:100%;min-width:640px;height:auto;color:var(--fg);font-family:var(--font-body)}
+figcaption{color:var(--muted);font-size:13px;margin-top:8px}
+.b-vault{fill:var(--accent);stroke:none}
+.b-agent{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+.b-peer{fill:var(--peer-soft);stroke:var(--peer);stroke-width:1.5}
+.b-gone{fill:none;stroke:var(--retired);stroke-width:1.5;stroke-dasharray:5 4}
+.b-fw{fill:var(--warm-soft);stroke:var(--warm);stroke-width:1.5}
+.b-plain{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.t{fill:var(--fg);font-size:14px;font-weight:600}
+.t2{fill:var(--muted);font-size:11.5px}
+.tw{fill:var(--bg);font-size:16px;font-weight:700;font-family:var(--font-display)}
+.edge{stroke:var(--muted);stroke-width:1.4;fill:none}
+.edge.dash{stroke-dasharray:5 4}
+.lab{fill:var(--muted);font-size:11px;font-family:var(--font-mono)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin:0 0 16px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1.5px solid}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.card h3{font-family:var(--font-display);font-size:19px;margin:0 0 2px}
+.kind{font:500 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pill{display:inline-block;font:500 11px var(--font-mono);padding:2px 8px;border-radius:999px;margin-right:4px}
+.p-ops{background:var(--accent-soft);color:var(--accent)}
+.p-code{background:var(--peer-soft);color:var(--peer)}
+.p-gone{background:var(--line);color:var(--muted)}
+.p-fw{background:var(--warm-soft);color:var(--warm)}
+.card dl{margin:10px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
+.card dt{color:var(--muted)}
+.card dd{margin:0;min-width:0;overflow-wrap:anywhere}
+code{font:13px var(--font-mono);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:0 0 20px;padding:0;list-style:none}
+.steps li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.steps b{font-family:var(--font-display);display:block;font-size:16px;margin-bottom:4px}
+.gate{border-color:var(--warm);background:var(--warm-soft)}
+.tl{list-style:none;margin:0;padding:0;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:10px;margin-left:6px}
+.tl li{position:relative;padding-left:18px}
+.tl li::before{content:"";position:absolute;left:-7px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.tl li.gone::before{background:var(--retired)}
+.tl small{font:12px var(--font-mono);color:var(--muted);display:block}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+details p{margin:8px 0 2px;color:var(--muted)}
+input[type=search]{width:100%;max-width:420px;font:15px var(--font-body);padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);margin-bottom:12px}
+h3.sec{font-family:var(--font-display);font-size:18px;margin:26px 0 10px}
+.note{background:var(--warm-soft);border:1px solid var(--warm);border-radius:10px;padding:12px 14px;font-size:14px}
+@media (prefers-reduced-motion:no-preference){.card{transition:transform .15s}.card:hover{transform:translateY(-2px)}}
+.tree{font:13px/1.7 var(--font-mono);margin:0;padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow-x:auto;white-space:pre}
+.tree i{font-style:normal;color:var(--muted)}
+.tree b{color:var(--accent);font-weight:500}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:block;overflow-x:auto}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 11px var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td:first-child{white-space:nowrap}
+ol.num{padding-left:20px;max-width:72ch}
+ol.num li{margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <h1>Vault Guide</h1>
+  <p class="sub">How a personal knowledge vault is built, folder by folder, and how the pieces link. A vault is a folder of markdown files that Claude Code maintains for you. Nothing in this page is personal: the example agents are invented.</p>
+</header>
+
+<nav role="tablist" aria-label="Views">
+  <button role="tab" id="tab-map" aria-selected="true" data-v="map">The big picture</button>
+  <button role="tab" id="tab-tree" aria-selected="false" data-v="tree">Folders in detail</button>
+  <button role="tab" id="tab-links" aria-selected="false" data-v="links">How it is linked</button>
+  <button role="tab" id="tab-session" aria-selected="false" data-v="session">A session, step by step</button>
+  <button role="tab" id="tab-grow" aria-selected="false" data-v="grow">Growing it</button>
+  <button role="tab" id="tab-know" aria-selected="false" data-v="know">Words and decisions</button>
+  <button role="tab" id="tab-setup" aria-selected="false" data-v="setup">Set up yours</button>
+</nav>
+
+<!-- MAP -->
+<section class="view on" id="map" role="tabpanel" aria-labelledby="tab-map">
+  <h2>The big picture</h2>
+  <p class="lead">One folder is the hub. Inside it, each area of your life or work gets an agent: a sub-folder with its own instructions, notes, current state and follow-ups. Bigger software projects sit beside the vault with their own repository.</p>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--accent);border-color:var(--accent)"></span>The vault</span>
+    <span><span class="dot" style="background:var(--accent-soft);border-color:var(--accent)"></span>Agent inside the vault</span>
+    <span><span class="dot" style="background:var(--peer-soft);border-color:var(--peer)"></span>Peer project (own repo)</span>
+    <span><span class="dot" style="background:var(--warm-soft);border-color:var(--warm)"></span>Shared framework (optional)</span>
+  </div>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 940 470" role="img" aria-label="The vault in the center with identity files above it, two ops agents on the left, a peer code project on the right and an optional shared framework below.">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor" opacity=".55"/></marker></defs>
+      <rect class="b-plain" x="300" y="30" width="240" height="64" rx="9"/>
+      <text class="t" x="316" y="56">me/</text><text class="t2" x="316" y="76">identity, profile, preferences</text>
+      <rect class="b-vault" x="300" y="180" width="240" height="110" rx="12"/>
+      <text class="tw" x="420" y="218" text-anchor="middle">Your vault</text>
+      <text x="420" y="242" text-anchor="middle" font-size="12" fill="var(--bg)">root rules, index dashboard,</text>
+      <text x="420" y="258" text-anchor="middle" font-size="12" fill="var(--bg)">glossary, decisions, patterns</text>
+      <path class="edge" d="M420 94 L420 180" marker-end="url(#ar)"/>
+      <text class="lab" x="430" y="142">read by every agent</text>
+
+      <text class="lab" x="20" y="130">AGENTS INSIDE THE VAULT</text>
+      <rect class="b-agent" x="20" y="146" width="210" height="70" rx="9"/>
+      <text class="t" x="34" y="172">job-search</text><text class="t2" x="34" y="192">example: tracks applications</text>
+      <rect class="b-agent" x="20" y="236" width="210" height="70" rx="9"/>
+      <text class="t" x="34" y="262">reading-list</text><text class="t2" x="34" y="282">example: turns links into notes</text>
+      <path class="edge" d="M230 181 C265 181 265 210 300 215" marker-end="url(#ar)"/>
+      <path class="edge" d="M230 271 C265 271 265 255 300 250" marker-end="url(#ar)"/>
+      <text class="lab" x="20" y="334">each reports to its own dashboard</text>
+
+      <text class="lab" x="640" y="130">PEER PROJECT, OWN REPO</text>
+      <rect class="b-peer" x="640" y="146" width="280" height="70" rx="9"/>
+      <text class="t" x="654" y="172">my-website</text><text class="t2" x="654" y="192">example: code agent with tickets</text>
+      <path class="edge dash" d="M540 235 C600 235 600 190 640 185" marker-end="url(#ar)"/>
+      <text class="lab" x="548" y="262">indexed, never loaded</text>
+
+      <text class="lab" x="20" y="384">SHARED FRAMEWORK, WHEN YOU HAVE SEVERAL REPOS</text>
+      <rect class="b-fw" x="20" y="400" width="400" height="56" rx="9"/>
+      <text class="t" x="34" y="424">plugin repo</text><text class="t2" x="34" y="442">the same commands and roles installed in each project</text>
+      <path class="edge dash" d="M300 400 C300 350 380 320 400 290" marker-end="url(#ar)"/>
+    </svg>
+    </div>
+    <figcaption>Solid arrows: reads or reports into. Dashed arrows: pointed at only. You can start with the vault and one agent. Everything else is added when you need it.</figcaption>
+  </figure>
+
+  <h3 class="sec">The five ideas that hold it together</h3>
+  <ol class="steps">
+    <li><b>Files, not memory</b>Claude does not remember yesterday. The vault is its memory: every session reads files at the start and writes files at the end.</li>
+    <li><b>One folder, one job</b>Each agent has a single purpose and its own instructions. Opening Claude in that folder is what makes it play that role.</li>
+    <li><b>Three homes for facts</b>About one item, true right now, or a lesson that held twice. Each goes to a different file and none of them grows forever.</li>
+    <li><b>Claude writes, you talk</b>You describe, decide and approve. Claude edits the files. The most important files change only after your yes.</li>
+    <li><b>Question before building</b>Anything new is first challenged against your own vocabulary and past decisions, so the vault stays consistent as it grows.</li>
+  </ol>
+</section>
+
+<!-- TREE -->
+<section class="view" id="tree" role="tabpanel" aria-labelledby="tab-tree">
+  <h2>Folders in detail</h2>
+  <p class="lead">The vault root first, then the anatomy of one agent. Every file below has a single reason to exist and a moment when it is written.</p>
+
+  <h3 class="sec">The vault root</h3>
+<pre class="tree"><b>vault/</b>
+├── <b>.claude/</b>                       <i>configuration Claude loads automatically</i>
+│   ├── CLAUDE.md                 <i>root rules, in every session</i>
+│   ├── session-context.md        <i>nouns and paths for start and end routines</i>
+│   ├── grill-context.md          <i>where glossary and decisions live</i>
+│   ├── rules/                    <i>always-on rules, for example voice</i>
+│   ├── commands/                 <i>/session-start  /session-end  /lint-vault</i>
+│   └── skills/                   <i>grill-with-docs and any others</i>
+├── <b>me/</b>                            <i>the owner: identity, profile, preferences</i>
+├── <b>agents/</b>                        <i>one sub-folder per agent</i>
+├── <b>wiki/</b>                          <i>vault-wide vocabulary, decisions, pattern registry</i>
+│   ├── CONTEXT.md
+│   ├── patterns.md
+│   └── adr/
+├── <b>threads/</b>                       <i>vault-level follow-ups (active, done)</i>
+├── <b>ideas/</b>                         <i>early thoughts that have not earned an agent</i>
+├── <b>atlas/</b>                         <i>optional: a visual map of all this</i>
+├── dashboard.md                  <i>the vault index: active agents, what blocks</i>
+└── last-session.md               <i>continuity for root sessions</i></pre>
+
+  <div class="grid" style="margin-top:14px">
+    <article class="card"><h3>.claude/CLAUDE.md</h3><span class="kind">Loaded every session</span>
+      <p>The constitution. Says what the vault is, which agents are active, where identity lives, and the behaviour rules that bind everyone: the agent writes and the human talks, confidentiality, ask before changing major files, question new ideas first.</p>
+      <dl><dt>Written</dt><dd>Rarely, with your yes</dd><dt>Keep out</dt><dd>Anything that changes weekly</dd></dl></article>
+    <article class="card"><h3>session-context.md</h3><span class="kind">Read by start and end</span>
+      <p>Lets two generic routines serve your vault. It says what you call a work item, where boards and dashboards live, and what extra checks to run.</p>
+      <dl><dt>Written</dt><dd>When you add an agent or change a name</dd></dl></article>
+    <article class="card"><h3>commands/</h3><span class="kind">You type them</span>
+      <p><code>/session-start</code> loads state. <code>/session-end</code> saves it. <code>/lint-vault</code> is the weekly health check and the gate for spreading patterns.</p>
+      <dl><dt>Written</dt><dd>Rarely, when a routine falls short</dd></dl></article>
+    <article class="card"><h3>skills/</h3><span class="kind">Claude picks them</span>
+      <p>Reusable ways of working that Claude applies when the task matches. <code>grill-with-docs</code> is the first one: it interviews you before anything new is built.</p>
+      <dl><dt>Difference</dt><dd>A command is typed by you, a skill is chosen by Claude</dd></dl></article>
+    <article class="card"><h3>me/</h3><span class="kind">Source of truth about you</span>
+      <p><code>identity.md</code> holds background and values. <code>profile.md</code> holds experience with evidence, the base for any CV or bio. <code>preferences.md</code> holds how you like to work.</p>
+      <dl><dt>Written</dt><dd>Only after your explicit yes</dd></dl></article>
+    <article class="card"><h3>dashboard.md (root)</h3><span class="kind">The vault index</span>
+      <p>A short table: which agents are active, where each dashboard is, what blocks across them. It stays tiny so loading it costs almost nothing.</p>
+      <dl><dt>Never holds</dt><dd>Anything about an agent's own domain</dd></dl></article>
+    <article class="card"><h3>wiki/ (root)</h3><span class="kind">Vault-wide knowledge</span>
+      <p><code>CONTEXT.md</code> is the glossary. <code>adr/</code> keeps one file per hard-to-reverse decision. <code>patterns.md</code> is the registry of habits worth spreading between agents.</p>
+      <dl><dt>Written</dt><dd>As terms and decisions are resolved</dd></dl></article>
+    <article class="card"><h3>threads/ and ideas/</h3><span class="kind">Loose ends</span>
+      <p>A thread is one open follow-up as one small file. An idea is a seed that may later become an agent after a grill session.</p>
+      <dl><dt>Written</dt><dd>When something is left open</dd></dl></article>
+  </div>
+
+  <h3 class="sec">Inside one agent</h3>
+<pre class="tree"><b>agents/job-search/</b>
+├── <b>.claude/CLAUDE.md</b>             <i>the agent's job, read-order, what a work item is called</i>
+├── dashboard.md                 <i>live state only, a few lines per item</i>
+├── last-session.md              <i>summary and next priorities, overwritten</i>
+├── <b>items/</b>                        <i>work items (often named tickets or applications)</i>
+│   ├── active/                  <i>one file per open item</i>
+│   ├── done/                    <i>finished items, full story kept here</i>
+│   └── board.md                 <i>one line per item, the compact index</i>
+├── <b>threads/</b>                      <i>open follow-ups for this agent</i>
+│   ├── active/
+│   └── done/
+├── <b>raw/</b>                          <i>source material, never edited after it lands</i>
+└── <b>wiki/</b>
+    ├── job-search-wiki.md       <i>navigation hub, links every other wiki file</i>
+    ├── CONTEXT.md               <i>this agent's vocabulary</i>
+    ├── patterns.md              <i>lessons that held twice</i>
+    └── adr/                     <i>this agent's decisions</i></pre>
+
+  <table>
+    <thead><tr><th>File</th><th>Answers the question</th><th>Written when</th></tr></thead>
+    <tbody>
+      <tr><td>.claude/CLAUDE.md</td><td>What is my job and what do I read first?</td><td>Rarely</td></tr>
+      <tr><td>dashboard.md</td><td>What is the state right now?</td><td>Each session end, trimmed</td></tr>
+      <tr><td>last-session.md</td><td>Where did we stop?</td><td>Each session end, overwritten</td></tr>
+      <tr><td>items/active, done</td><td>What happened with this one item?</td><td>As the item moves</td></tr>
+      <tr><td>items/board.md</td><td>Which items exist and what is each one's status?</td><td>Whenever an item moves</td></tr>
+      <tr><td>threads/</td><td>What is still open?</td><td>When a follow-up appears or closes</td></tr>
+      <tr><td>raw/</td><td>What did the original say?</td><td>When material arrives, then frozen</td></tr>
+      <tr><td>wiki hub</td><td>What knowledge exists and where?</td><td>When a wiki file is added</td></tr>
+      <tr><td>wiki/CONTEXT.md</td><td>What does this word mean here?</td><td>When a term is resolved</td></tr>
+      <tr><td>wiki/patterns.md</td><td>Have we hit this before?</td><td>Session end, after it held twice</td></tr>
+      <tr><td>wiki/adr/</td><td>Why did we choose this?</td><td>When a decision qualifies</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- LINKS -->
+<section class="view" id="links" role="tabpanel" aria-labelledby="tab-links">
+  <h2>How it is linked</h2>
+  <p class="lead">Three kinds of link make the vault hang together: instructions that stack, files that every agent reads, and wiki links that connect notes. Nothing is automatic except the loading of instruction files. Everything else is a rule Claude follows because a file tells it to.</p>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 940 400" role="img" aria-label="Instruction stacking: root CLAUDE.md loads rules and identity, an agent CLAUDE.md stacks on top, and the agent reads its own dashboard, last session, threads, items and wiki, while shared identity is read from me.">
+      <defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor" opacity=".55"/></marker></defs>
+      <text class="lab" x="20" y="30">VAULT LEVEL</text>
+      <rect class="b-vault" x="20" y="44" width="230" height="64" rx="9"/>
+      <text class="tw" x="36" y="72" style="font-size:15px">root CLAUDE.md</text><text x="36" y="92" font-size="12" fill="var(--bg)">loaded in every session</text>
+      <rect class="b-plain" x="330" y="44" width="260" height="64" rx="9"/>
+      <text class="t" x="344" y="70">rules/communication-style.md</text><text class="t2" x="344" y="90">voice, pulled in by the @ import</text>
+      <rect class="b-plain" x="670" y="44" width="250" height="64" rx="9"/>
+      <text class="t" x="684" y="70">me/identity.md</text><text class="t2" x="684" y="90">pulled in by the @ import</text>
+      <path class="edge" d="M250 76 L330 76" marker-end="url(#ar3)"/>
+      <path class="edge" d="M250 60 C290 20 640 20 700 44" marker-end="url(#ar3)"/>
+
+      <text class="lab" x="20" y="164">AGENT LEVEL</text>
+      <rect class="b-agent" x="20" y="178" width="230" height="64" rx="9"/>
+      <text class="t" x="36" y="204">agent CLAUDE.md</text><text class="t2" x="36" y="224">stacks on top of the root</text>
+      <path class="edge" d="M135 108 L135 178" marker-end="url(#ar3)"/>
+      <text class="lab" x="145" y="148">root rules still apply</text>
+
+      <rect class="b-plain" x="330" y="168" width="170" height="44" rx="8"/><text class="t" x="344" y="195" font-size="13">dashboard.md</text>
+      <rect class="b-plain" x="330" y="222" width="170" height="44" rx="8"/><text class="t" x="344" y="249" font-size="13">last-session.md</text>
+      <rect class="b-plain" x="330" y="276" width="170" height="44" rx="8"/><text class="t" x="344" y="303" font-size="13">wiki hub, patterns</text>
+      <rect class="b-plain" x="520" y="168" width="170" height="44" rx="8"/><text class="t" x="534" y="195" font-size="13">threads/active</text>
+      <rect class="b-plain" x="520" y="222" width="170" height="44" rx="8"/><text class="t" x="534" y="249" font-size="13">items/board.md</text>
+      <rect class="b-plain" x="520" y="276" width="170" height="44" rx="8"/><text class="t" x="534" y="303" font-size="13">raw/ (read only)</text>
+      <path class="edge" d="M250 210 L330 190" marker-end="url(#ar3)"/>
+      <path class="edge" d="M250 214 L330 244" marker-end="url(#ar3)"/>
+      <path class="edge" d="M250 222 L330 298" marker-end="url(#ar3)"/>
+      <text class="lab" x="330" y="346">read at session start, written at session end</text>
+
+      <rect class="b-plain" x="740" y="178" width="180" height="64" rx="9"/>
+      <text class="t" x="754" y="204">me/ files</text><text class="t2" x="754" y="224">shared by all agents</text>
+      <path class="edge dash" d="M250 200 C300 130 700 130 740 190" marker-end="url(#ar3)"/>
+    </svg>
+    </div>
+    <figcaption>Opening Claude inside an agent folder loads the agent's CLAUDE.md on top of the root one. The agent's own files are its working set. The vault-level files are the shared base.</figcaption>
+  </figure>
+
+  <h3 class="sec">The three kinds of link</h3>
+  <div class="grid">
+    <article class="card"><h3>Instruction stacking</h3><span class="kind">Automatic</span>
+      <p>Claude Code loads <code>.claude/CLAUDE.md</code> from the folder you open and from every parent folder. So an agent folder gets its own rules plus the root rules. A line starting with <code>@</code> imports another file into the instructions, which is how identity and voice reach every agent.</p></article>
+    <article class="card"><h3>Read-order links</h3><span class="kind">Written as arrows in CLAUDE.md</span>
+      <p>The agent's CLAUDE.md lists what to read and where, for example identity, dashboard, last session, threads. These are plain relative paths. They are instructions, so Claude follows them rather than the computer enforcing them.</p></article>
+    <article class="card"><h3>Wiki links</h3><span class="kind">For you and for Claude</span>
+      <p>Notes link to each other with double brackets, for example <code>[[patterns]]</code>. Obsidian turns them into clickable links and a graph. Claude uses them to find related notes. Every wiki file should be linked from the agent's hub, or it becomes an orphan nobody reads.</p></article>
+  </div>
+
+  <h3 class="sec">Who may write what</h3>
+  <table>
+    <thead><tr><th>Who</th><th>May write</th><th>Must never write</th></tr></thead>
+    <tbody>
+      <tr><td>Agent session</td><td>Its own dashboard, last session, items, threads, wiki</td><td>Another agent's files, the root index unless vault state changed</td></tr>
+      <tr><td>Root session</td><td>Root index, vault wiki, pattern registry, new agents</td><td>An agent's items or threads</td></tr>
+      <tr><td>Claude, any session</td><td>Everything above for its scope, after asking where needed</td><td>me/ files and CLAUDE.md files without your yes</td></tr>
+      <tr><td>You</td><td>Nothing directly. You talk and approve</td><td>(by design, Claude is the only editor)</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sec">Where each kind of fact goes (the three homes)</h3>
+  <ol class="steps">
+    <li><b>About one item</b>The item's own file in <code>items/done/</code>. Answers: what happened with this one?</li>
+    <li><b>True right now</b>One line on the dashboard. Answers: what is the state? When the item closes, the line is deleted.</li>
+    <li><b>A lesson that held twice</b>The agent's <code>wiki/patterns.md</code>. Answers: have we met this before? One occurrence is only a thread.</li>
+  </ol>
+  <div class="note"><b>Why this matters.</b> Without the rule, the dashboard becomes a diary. One real vault saw its dashboard reach 93 KB before the rule was adopted. Loading it every session then cost more than the work it supported.</div>
+</section>
+
+<!-- SESSION -->
+<section class="view" id="session" role="tabpanel" aria-labelledby="tab-session">
+  <h2>A session, step by step</h2>
+  <p class="lead">Every working session has three beats. The two ends are commands you type. In the middle you simply work.</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 940 230" role="img" aria-label="Session flow from start to work to end, with an approval gate under the work step.">
+      <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor" opacity=".55"/></marker></defs>
+      <rect class="b-agent" x="10" y="60" width="250" height="100" rx="10"/>
+      <text class="t" x="26" y="88">1. Start</text><text class="t2" x="26" y="108">/session-start</text><text class="t2" x="26" y="126">loads index, dashboard,</text><text class="t2" x="26" y="142">last session, threads</text>
+      <rect class="b-plain" x="345" y="60" width="250" height="100" rx="10"/>
+      <text class="t" x="361" y="88">2. Work</text><text class="t2" x="361" y="108">you describe, Claude asks,</text><text class="t2" x="361" y="126">you answer, Claude writes.</text><text class="t2" x="361" y="142">New idea? grill first</text>
+      <rect class="b-agent" x="680" y="60" width="250" height="100" rx="10"/>
+      <text class="t" x="696" y="88">3. End</text><text class="t2" x="696" y="108">/session-end</text><text class="t2" x="696" y="126">saves facts to their home,</text><text class="t2" x="696" y="142">commits on its own branch</text>
+      <path class="edge" d="M260 110 L345 110" marker-end="url(#ar2)"/>
+      <path class="edge" d="M595 110 L680 110" marker-end="url(#ar2)"/>
+      <rect class="b-fw" x="345" y="182" width="250" height="38" rx="8"/>
+      <text class="t" x="361" y="206" font-size="13">Approval gate</text>
+      <path class="edge dash" d="M470 160 L470 182"/>
+      <text class="lab" x="610" y="206">big files, patterns, story drift</text>
+    </svg>
+    </div>
+    <figcaption>Claude stops and waits for a yes only at the orange box.</figcaption>
+  </figure>
+
+  <h3 class="sec">What /session-start does</h3>
+  <ol class="num">
+    <li><b>Detects the session type.</b> Inside an agent folder it is an Agent Session. At the vault root it is a Root Session.</li>
+    <li><b>Loads state.</b> The vault index, then the agent's dashboard, last session, patterns and item board. It never reads another agent's dashboard.</li>
+    <li><b>Reconciles.</b> Runs <code>git fetch</code> and looks at recent changes. If you or a second session edited agent files since last time, Claude reads them before writing anything. It also lists branches that hold finished but unmerged work.</li>
+    <li><b>Loads the wiki hub</b> so it knows what knowledge exists.</li>
+    <li><b>Scans threads and items</b> for anything overdue or blocking.</li>
+    <li><b>Runs agent-specific checks</b> if the agent's CLAUDE.md defines some.</li>
+    <li><b>Prints a short summary</b> and does no other work until you read it.</li>
+  </ol>
+
+  <h3 class="sec">What /session-end does</h3>
+  <ol class="num">
+    <li><b>Fetches again</b> to see what other sessions landed.</li>
+    <li><b>Runs the agent's own end steps.</b></li>
+    <li><b>Updates the dashboard.</b> Finished work is deleted, new work is added, nothing is appended as a recap.</li>
+    <li><b>Writes history to the right home.</b> Applies the three homes rule, including to old entries it finds.</li>
+    <li><b>Overwrites last-session.md</b> with a short summary and numbered priorities. If another session wrote it meanwhile, it appends a labelled section.</li>
+    <li><b>Creates or closes thread files.</b></li>
+    <li><b>Checks the grill checkpoint</b> if one ran: were terms and decisions recorded?</li>
+    <li><b>Commits</b> the exact files touched, on the session's own branch. Never stages everything at once.</li>
+    <li><b>Confirms</b> which files changed, so you can verify without opening each one.</li>
+  </ol>
+
+  <h3 class="sec">When Claude must ask before writing</h3>
+  <ol class="steps">
+    <li class="gate"><b>Major files</b>Root CLAUDE.md, me/profile.md and me/identity.md. Claude shows the exact change first.</li>
+    <li class="gate"><b>Patterns</b>A habit that could help other agents is proposed to you. Only after your yes does it enter the registry.</li>
+    <li class="gate"><b>Story drift</b>If what you say differs from your saved story, Claude asks instead of quietly updating.</li>
+    <li class="gate"><b>Main branch</b>Nothing is merged or pushed to main without your explicit yes in that session.</li>
+  </ol>
+
+  <h3 class="sec">Two sessions at once</h3>
+  <p class="lead">A session cannot know whether another is running, so the safe habits are always on. Each session works on its own branch. Files are staged by name, never all at once. The two files rewritten every time (the dashboard and last session) are re-read before editing. For truly parallel work, give the second session its own worktree, which is a second working copy of the same repository.</p>
+</section>
+
+<!-- GROW -->
+<section class="view" id="grow" role="tabpanel" aria-labelledby="tab-grow">
+  <h2>Growing it</h2>
+  <p class="lead">Start with the vault and one agent. Add each of these only when you feel the need.</p>
+  <div class="grid">
+    <article class="card"><span class="kind">First</span><h3>An ops agent</h3><span class="pill p-ops">no code</span>
+      <p>An agent that works through notes, skills and commands only. A job search, a reading list, a research topic, a business log. Its work item is whatever you track: an application, a paper, a client.</p>
+      <dl><dt>Needs</dt><dd>CLAUDE.md, dashboard, items, threads, wiki</dd><dt>Created by</dt><dd>A grill session at the vault root</dd></dl></article>
+    <article class="card"><span class="kind">Second</span><h3>A code agent</h3><span class="pill p-code">owns software</span>
+      <p>An agent that builds and maintains an application. Adds a tickets board, a build-context file and a build routine split into roles, so design, building and testing are separate steps with separate mindsets.</p>
+      <dl><dt>Roles</dt><dd>UX, UI design, architect, developer, infrastructure, quality check</dd><dt>Work item</dt><dd>Ticket</dd></dl></article>
+    <article class="card"><span class="kind">When it has a remote</span><h3>A peer project</h3><span class="pill p-code">own repo</span>
+      <p>A project that pushes to its own remote lives beside the vault, not inside it. The test is mechanical. The vault index lists it and points to it, and never loads its dashboard.</p>
+      <dl><dt>Why</dt><dd>Keeps each repo small and keeps private material out of public ones</dd></dl></article>
+    <article class="card"><span class="kind">When two repos share routines</span><h3>A shared framework</h3><span class="pill p-fw">plugins</span>
+      <p>A separate repository packaged as Claude Code plugins. One layer holds identity-free mechanics (session routines, build roles). A second layer holds what is personal (your voice, your story). Projects install the layers they need.</p>
+      <dl><dt>Test for the split</dt><dd>Would this file read identically for another person? Then it is identity-free</dd></dl></article>
+    <article class="card"><span class="kind">When habits are stable</span><h3>Guards</h3><span class="pill p-fw">hooks</span>
+      <p>Small programs that run before an action and refuse it if it breaks a mechanical rule, for example pushing to main or staging every file at once. A written rule relies on Claude remembering. A guard does not.</p>
+      <dl><dt>Fail style</dt><dd>Closed for actions hard to undo, open with a warning for reversible ones</dd></dl></article>
+    <article class="card"><span class="kind">When the vault is big</span><h3>An atlas page</h3><span class="pill p-ops">optional</span>
+      <p>One standalone HTML file that draws the structure so a newcomer, or you in six months, can see it at once. Structure only: no private content, no figures, no outcomes.</p>
+      <dl><dt>Refresh</dt><dd>On request, never automatically</dd></dl></article>
+  </div>
+
+  <h3 class="sec">A growth path that works</h3>
+  <ol class="num">
+    <li>Week 1: identity files, root rules, the two session commands, one ops agent.</li>
+    <li>Weeks 2 to 3: use the loop daily. Fix the commands where they fall short.</li>
+    <li>Month 2: second agent. First patterns proposed and approved. First weekly lint.</li>
+    <li>Later: a code agent or a peer project, then a shared framework once two repos need the same routine.</li>
+  </ol>
+</section>
+
+<!-- KNOWLEDGE -->
+<section class="view" id="know" role="tabpanel" aria-labelledby="tab-know">
+  <h2>Words and decisions</h2>
+  <p class="lead">The vocabulary the vault uses, and the design choices behind its shape. Reuse the words as they are. A shared vocabulary is what lets Claude and you mean the same thing.</p>
+
+  <h3 class="sec">Design choices and the reason for each</h3>
+  <div class="grid">
+    <article class="card"><h3>Structure</h3><ul class="tl">
+      <li><small>Dashboards per agent</small>One live-state file per agent, with a thin index above. A single big dashboard grows until it is too costly to load.</li>
+      <li><small>Peers by remote</small>A project with its own remote lives beside the vault. The test needs no judgment.</li>
+      <li class="gone"><small>No app on top</small>A web view over the vault was built once and never used. The markdown files are the interface.</li></ul></article>
+    <article class="card"><h3>Memory and history</h3><ul class="tl">
+      <li><small>Threads as files</small>One follow-up per file with frontmatter beats one long list nobody trims.</li>
+      <li><small>Three homes</small>Facts are filed by kind. A running log file was retired because nothing ever read it.</li>
+      <li><small>last-session overwritten</small>Continuity without accumulating history.</li></ul></article>
+    <article class="card"><h3>Working method</h3><ul class="tl">
+      <li><small>Grill before building</small>Questions come first, files second. It catches naming clashes before they spread.</li>
+      <li><small>Commits at session end</small>One explicit commit step, not automatic hooks, so nothing is saved half-finished.</li>
+      <li><small>Patterns through a gate</small>A habit spreads to other agents only after you approve it.</li>
+      <li><small>Inventory, not enforcement</small>The weekly lint reports drift from shared files. It never forces a change.</li></ul></article>
+  </div>
+
+  <h3 class="sec">Vocabulary</h3>
+  <input type="search" id="q" placeholder="Filter words" aria-label="Filter vocabulary">
+  <div id="gloss">
+    <details><summary>Vault</summary><p>The root folder holding all agents, shared rules and the owner's identity files.</p></details>
+    <details><summary>Agent</summary><p>A named area inside the vault with one job, its own CLAUDE.md, wiki, dashboard and threads.</p></details>
+    <details><summary>Ops agent</summary><p>An agent with no code. Works through notes, skills and commands.</p></details>
+    <details><summary>Code agent</summary><p>An agent that owns software and uses tickets and a build routine with separate roles.</p></details>
+    <details><summary>Root session</summary><p>Claude opened at the vault root. For vault-wide work such as adding an agent or running the weekly lint.</p></details>
+    <details><summary>Agent session</summary><p>Claude opened inside one agent folder. It sees that agent's domain plus the shared rules.</p></details>
+    <details><summary>CLAUDE.md</summary><p>An instruction file Claude loads automatically from the folder it is opened in and from parent folders.</p></details>
+    <details><summary>Command</summary><p>A routine you trigger by typing a slash name, such as /session-start.</p></details>
+    <details><summary>Skill</summary><p>A reusable way of working that Claude chooses when the task matches.</p></details>
+    <details><summary>Rule</summary><p>An always-on instruction file, such as the voice guide.</p></details>
+    <details><summary>Wiki</summary><p>The structured notes inside one agent: a hub page, reference files and decisions.</p></details>
+    <details><summary>Dashboard</summary><p>One file per agent showing only what is true right now.</p></details>
+    <details><summary>Vault index</summary><p>The root dashboard. A short list of active agents and anything blocking.</p></details>
+    <details><summary>Work item</summary><p>The unit an agent tracks. Each agent gives it its own name: ticket, application, task.</p></details>
+    <details><summary>Thread</summary><p>One open follow-up saved as its own small file under threads/active/.</p></details>
+    <details><summary>Three homes</summary><p>The rule for where a fact is saved: the item's file, the dashboard, or the patterns file.</p></details>
+    <details><summary>Pattern</summary><p>A habit that held twice. In the root registry it is a proposal to spread to other agents, after approval.</p></details>
+    <details><summary>Pattern registry</summary><p>wiki/patterns.md at the vault root. The approved list of patterns and which agents adopted each one.</p></details>
+    <details><summary>CONTEXT.md</summary><p>The glossary. Words only, no implementation detail.</p></details>
+    <details><summary>ADR</summary><p>Architecture decision record. One short file explaining a hard-to-reverse choice, why it was made and what it costs.</p></details>
+    <details><summary>Raw</summary><p>Source documents stored as received and never edited afterwards.</p></details>
+    <details><summary>Narrative drift</summary><p>When what you say now differs from what the vault holds about you. Claude asks before changing the saved version.</p></details>
+    <details><summary>Peer project</summary><p>A project with its own repository placed beside the vault. The vault points to it and never loads it.</p></details>
+    <details><summary>Plugin</summary><p>A packaged set of commands, roles and rules that can be installed in several projects.</p></details>
+    <details><summary>Guard</summary><p>A hook that blocks a mechanical rule break before it happens.</p></details>
+    <details><summary>Worktree</summary><p>A second working copy of the same repository, used so two sessions do not overwrite each other.</p></details>
+    <details><summary>Atlas</summary><p>A single HTML page that draws the vault's structure.</p></details>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section class="view" id="setup" role="tabpanel" aria-labelledby="tab-setup">
+  <h2>Set up yours</h2>
+  <p class="lead">Two ways to the same vault. Pick the one that fits how you like to work.</p>
+  <div class="grid">
+    <article class="card"><span class="kind">Path A</span><h3>Template folder</h3><span class="pill p-ops">faster</span>
+      <p>Copy the <code>vault-template/</code> folder, run <code>git init</code>, open Claude Code in it and let Claude walk you through each placeholder, one question at a time. You get the full skeleton at once and fill it in.</p>
+      <dl><dt>Good if</dt><dd>You already know what the vault is for</dd><dt>Time</dt><dd>One sitting for the skeleton, then daily use</dd></dl></article>
+    <article class="card"><span class="kind">Path B</span><h3>Staged setup guide</h3><span class="pill p-code">guided</span>
+      <p>Give <code>SETUP.md</code> to Claude in an empty folder. It interviews you and builds in seven stages, keeping a progress file so you can stop and resume in later sessions.</p>
+      <dl><dt>Good if</dt><dd>You would rather be interviewed than edit templates</dd><dt>Time</dt><dd>Several short sittings</dd></dl></article>
+  </div>
+  <h3 class="sec">The seven stages of Path B</h3>
+  <ol class="steps">
+    <li><b>0 Orientation</b>Your name, language, and what the vault is for.</li>
+    <li><b>1 Identity</b>The three me/ files and your voice rules.</li>
+    <li><b>2 Skeleton</b>Folders, root rules, session commands, glossary.</li>
+    <li><b>3 First agent</b>A grill session, then the agent folder.</li>
+    <li><b>4 Prove the loop</b>Real work, then /session-end, then inspect.</li>
+    <li><b>5 Grow</b>More agents, code agent, peers, framework, guards.</li>
+    <li><b>6 Share</b>Optional atlas page, structure only.</li>
+  </ol>
+  <div class="note"><b>Start small.</b> Most of what makes this work is the daily start and end routine. A single agent used for a month teaches more than five agents set up in a weekend.</div>
+</section>
+</div>
+
+<script>
+(function(){
+  var tabs=document.querySelectorAll('nav button'),views=document.querySelectorAll('section.view');
+  function show(id){
+    var ok=false;
+    views.forEach(function(v){var on=v.id===id;v.classList.toggle('on',on);if(on)ok=true});
+    if(!ok){id='map';document.getElementById('map').classList.add('on')}
+    tabs.forEach(function(t){t.setAttribute('aria-selected',t.dataset.v===id?'true':'false')});
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){show(t.dataset.v);try{history.replaceState(null,'','#'+t.dataset.v)}catch(e){}})});
+  show((location.hash||'').slice(1)||'map');
+  document.getElementById('q').addEventListener('input',function(e){
+    var s=e.target.value.toLowerCase();
+    document.querySelectorAll('#gloss details').forEach(function(d){d.hidden=s&&d.textContent.toLowerCase().indexOf(s)<0});
+  });
+})();
+</script>
+</body>
+</html>
