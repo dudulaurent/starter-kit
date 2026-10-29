@@ -11,7 +11,7 @@ question, give your recommended answer and the reason. Ask one question at a tim
 If the answer is in the files, read the files instead of asking.
 
 ## Where things live
-Read `.claude/grill-context.md`. It names the glossary (`CONTEXT.md`) and the decisions folder
+Read `vault-config/grill-context.md`. It names the glossary (`CONTEXT.md`) and the decisions folder
 (`adr/`) for this vault. Create files only when there is something to write.
 
 ## During the session

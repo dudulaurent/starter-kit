@@ -1,8 +1,8 @@
-# Vault setup guide for Claude
+# Vault setup guide for your agent
 
-*Path B: attach or paste this file into Claude Code, opened in an empty folder. It builds a personal Obsidian vault in stages across several sessions. Path A (the `vault-template/` folder) gives you the finished skeleton at once. Both end in the same vault.*
+*Path B: attach or paste this file into Claude Code or Codex, opened in an empty folder. It builds a personal Obsidian vault in stages across several sessions. Path A (the `vault-template/` folder) gives you the finished skeleton at once. Both end in the same vault.*
 
-## Instructions to Claude
+## Instructions to the agent
 
 You are setting up a personal knowledge vault for the person you are talking to, called the owner below. The vault follows the LLM Wiki pattern: you maintain structured markdown files so knowledge accumulates instead of being re-derived each time. Read this whole file before doing anything.
 
@@ -11,7 +11,7 @@ You are setting up a personal knowledge vault for the person you are talking to,
 2. **Keep a progress file.** Create `SETUP-PROGRESS.md` in the vault root after Stage 0. Tick each stage when done and note decisions the owner made. At the start of every later session, read it first and resume at the first unticked stage.
 3. **Ask, then write.** Ask one question at a time. For each question give a recommended answer and the reason. Show at least three options whenever the owner must choose.
 4. **Plain language.** Explain every technical choice in everyday terms before any jargon.
-5. **Show before major writes.** Before writing `.claude/CLAUDE.md`, `me/identity.md` or `me/profile.md`, show the exact text and wait for a yes.
+5. **Show before major writes.** Before writing `AGENTS.md`, `me/identity.md` or `me/profile.md`, show the exact text and wait for a yes.
 6. **No invented facts.** If the owner has no number for an achievement, record it qualitatively.
 7. **Git hygiene.** Initialise git at Stage 0. Commit at the end of every stage, staging explicit paths only.
 
@@ -27,32 +27,33 @@ Interview the owner to fill three files. Show each draft before writing it.
 - `me/profile.md`: roles, education, skills, projects, each with concrete evidence.
 - `me/preferences.md`: reply length, how decisions are presented, tools and formats, things to always ask first, things never to do.
 
-Then derive `.claude/rules/communication-style.md` from how the owner writes and what they dislike. Offer the example rules (concise, minimum 3 options, plain language first, no filler) and let them keep, drop or add.
+Then derive `vault-config/rules/communication-style.md` from how the owner writes and what they dislike. Offer the example rules (concise, minimum 3 options, plain language first, no filler) and let them keep, drop or add.
 
 ### Stage 2: Skeleton (one sitting)
 Create the folder structure and shared files exactly as listed under "Target structure". Write real content, not empty stubs, for:
-- `.claude/CLAUDE.md`: what the vault is, active agents, identity pointers, vault map, global behaviour rules (agent writes and human talks, confidentiality, narrative drift, brainstorm gate, pattern gate, concurrent sessions), what does not belong in the file.
-- `.claude/session-context.md`: the two session types and the nouns and paths table.
-- `.claude/grill-context.md`: where glossary and decisions live.
-- `.claude/commands/session-start.md`, `session-end.md`, `lint-vault.md`: the three routines.
-- `.claude/skills/grill-with-docs/SKILL.md`: the interview skill.
+- `AGENTS.md`: what the vault is, active agents, identity pointers, vault map, global behaviour rules (agent writes and human talks, confidentiality, narrative drift, brainstorm gate, pattern gate, concurrent sessions), what does not belong in the file. It tells the agent to read `me/identity.md` and `vault-config/rules/communication-style.md` at the start of every session, and it asks for short sessions.
+- `CLAUDE.md`, next to every `AGENTS.md`: one line, `@AGENTS.md`. Claude Code reads this file and follows it to the shared rules. Codex ignores it.
+- `vault-config/session-context.md`: the two session types and the nouns and paths table.
+- `vault-config/grill-context.md`: where glossary and decisions live.
+- `vault-config/rules/communication-style.md`: the voice rules.
+- The four skills `session-start`, `session-end`, `lint-vault` and `grill-with-docs`, each as a `SKILL.md` with `name` and `description`. Write every skill twice, with identical text: in `.claude/skills/<name>/` for Claude Code and in `.agents/skills/<name>/` for Codex. No symlinks, so the kit survives a zip download and Windows.
 - `dashboard.md` (the vault index), `last-session.md`, `wiki/CONTEXT.md`, `wiki/patterns.md`, `wiki/adr/adr-index.md`.
 
-Use the descriptions in "What each shared file does" for their content. Commit. Tell the owner to close the session and open a new one at the vault root, so the commands load.
+Use the descriptions in "What each shared file does" for their content. Commit. Tell the owner to close the session and open a new one at the vault root, so the skills load.
 
 ### Stage 3: First agent (one or two sittings)
-Open a new session at the vault root and run `/session-start`. Then run the `grill-with-docs` skill on the owner's first use case. The interview should settle: the agent's name, its job in one sentence, what its work item is called, what raw material it reads, what it must never do without asking. Then create `agents/<name>/` with the layout under "Anatomy of an agent". Record any resolved term in `wiki/CONTEXT.md`. Offer an ADR only if the decision is hard to reverse, surprising without context and a real trade-off.
+Open a new session at the vault root and run the `session-start` skill (`/session-start` in Claude Code, `$session-start` in Codex). Then run the `grill-with-docs` skill on the owner's first use case. The interview should settle: the agent's name, its job in one sentence, what its work item is called, what raw material it reads, what it must never do without asking. Then create `agents/<name>/` with the layout under "Anatomy of an agent". Record any resolved term in `wiki/CONTEXT.md`. Offer an ADR only if the decision is hard to reverse, surprising without context and a real trade-off.
 
-End the sitting with `/session-end` to prove the loop works.
+End the sitting with the `session-end` skill to prove the loop works.
 
 ### Stage 4: Prove the loop (one sitting)
-Do real work in the new agent for one session. At the end, run `/session-end` and inspect the result together with the owner: was the dashboard trimmed, did the right facts land in the right home, is `last-session.md` useful? Fix the commands where they fell short. The aim is for the owner to trust the loop before adding more.
+Do real work in the new agent for one session. At the end, run `session-end` and inspect the result together with the owner: was the dashboard trimmed, did the right facts land in the right home, is `last-session.md` useful? Fix the skills where they fell short. The aim is for the owner to trust the loop before adding more.
 
 ### Stage 5: Grow (as needed, any order)
-- **Another agent.** Repeat Stage 3. Add it to the root dashboard, CLAUDE.md and session-context.
-- **A code agent.** For an agent that owns software, add tickets (`tickets/active`, `tickets/done`, a board), a build context file, and a build routine with separate roles: spec, design, build, quality. Keep role definitions in `.claude/agents/`.
+- **Another agent.** Repeat Stage 3. Add it to the root dashboard, `AGENTS.md` and session-context. Give it its own `AGENTS.md` and a one-line `CLAUDE.md`.
+- **A code agent.** For an agent that owns software, add tickets (`tickets/active`, `tickets/done`, a board), a build context file, and a build routine with separate roles: spec, design, build, quality. Keep role definitions in the tool's own agents folder.
 - **A peer project.** A project that needs its own git remote lives beside the vault, not inside it. The vault index points at it and never loads its content.
-- **Shared framework.** When two or more repos need the same commands, move them into a Claude Code plugin marketplace repo and install it in each. Not before.
+- **Shared framework.** When two or more repos need the same commands, move them into a shared plugin repo (Claude Code and Codex each have their own plugin format) and install it in each. Not before.
 - **Guards.** Once the habits are stable, add hooks that block mechanical rule breaks, for example pushing to `main` or staging everything.
 
 ### Stage 6: Share (optional)
@@ -62,27 +63,29 @@ Generate an atlas page (a single HTML file) that shows the structure with the ow
 
 ## The model
 
-A **vault** is a folder of markdown files. Inside it, **agents** are named areas, each with one job, its own instructions, notes, current state and follow-ups. You open Claude Code in a folder, and the instructions in that folder tell Claude which role to play and what to read. Three habits make it compound:
+A **vault** is a folder of markdown files. Inside it, **agents** are named areas, each with one job, its own instructions, notes, current state and follow-ups. You open your agent in a folder, and the instructions in that folder tell it which role to play and what to read. Three habits make it compound:
 
 1. **Every session starts and ends the same way.** Start loads the current state. End writes what changed to the right place.
 2. **Facts have three homes.** About one item: its own record. True right now: one line on the dashboard. A lesson that held twice: the patterns file.
-3. **The agent writes, the human talks.** Claude is the only editor. For the big files, Claude shows the change and waits for a yes.
+3. **The agent writes, the human talks.** The agent is the only editor. For the big files, the agent shows the change and waits for a yes.
 
 ## Target structure
 
 ```
 vault/
-├── .claude/
-│   ├── CLAUDE.md                 root rules, loaded in every session
+├── AGENTS.md                     root rules, loaded in every session
+├── CLAUDE.md                     one line, "@AGENTS.md", for Claude Code
+├── vault-config/
 │   ├── session-context.md        nouns and paths for the two routines
 │   ├── grill-context.md          where glossary and decisions live
-│   ├── rules/communication-style.md
-│   ├── commands/                 session-start, session-end, lint-vault
-│   └── skills/grill-with-docs/SKILL.md
+│   └── rules/communication-style.md
+├── .claude/skills/               session-start, session-end, lint-vault, grill-with-docs
+├── .agents/skills/               the same four skills, identical text, for Codex
 ├── me/                           identity, profile, preferences
 ├── agents/
 │   └── <agent>/
-│       ├── .claude/CLAUDE.md     this agent's job and read-order
+│       ├── AGENTS.md             this agent's job and read-order
+│       ├── CLAUDE.md             one line, "@AGENTS.md"
 │       ├── dashboard.md          live state only
 │       ├── last-session.md       overwritten each session end
 │       ├── items/ (or tickets/)  active/, done/, board.md
@@ -98,8 +101,8 @@ vault/
 
 ## What each shared file does
 
-- **`.claude/CLAUDE.md`** is loaded automatically. It holds rules that apply to every agent. It must stay free of anything that changes weekly.
-- **`session-context.md`** lets the two routines serve any vault: it names what a work item is called and where the board, dashboard and wiki hub are.
+- **`AGENTS.md`** is loaded automatically (Claude Code reaches it through the one-line `CLAUDE.md`). It holds rules that apply to every agent. It must stay free of anything that changes weekly.
+- **`vault-config/session-context.md`** lets the two routines serve any vault: it names what a work item is called and where the board, dashboard and wiki hub are.
 - **`session-start`** reads the vault index, then the agent's dashboard, last session, patterns and board. It runs `git fetch`, reconciles edits made by hand or by another session, lists branches ahead of `main`, scans threads, and prints a confirmation. It does no other work until done.
 - **`session-end`** fetches again, updates the dashboard (deleting finished work), sorts each fact into its home, overwrites `last-session.md`, files threads, and commits on the session's own branch.
 - **`lint-vault`** runs weekly from the vault root: checks that each agent has a glossary, proposes pending patterns, and checks that the index matches the agents folder.
@@ -112,7 +115,7 @@ vault/
 
 | Path | Purpose | Written when |
 |---|---|---|
-| `.claude/CLAUDE.md` | The agent's job, read-order, work-item name | Rarely |
+| `AGENTS.md` (with a one-line `CLAUDE.md`) | The agent's job, read-order, work-item name | Rarely |
 | `dashboard.md` | What is true now, as short lines | Every session end |
 | `last-session.md` | Summary and next priorities | Every session end, overwritten |
 | `items/active`, `items/done`, `items/board.md` | Work item records and the one-line index | When an item opens, changes or closes |
@@ -123,7 +126,7 @@ vault/
 | `wiki/patterns.md` | Lessons that held twice | At session end |
 | `wiki/adr/` | The agent's own decisions | When a decision qualifies |
 
-## Rules of thumb Claude should hold throughout
+## Rules of thumb the agent should hold throughout
 - Folder names stay stable. Renaming breaks every link, so name the work item per agent in prose and keep the folders.
 - A thread is one open follow-up. A pattern needs two occurrences.
 - An artifact of an item (a draft, a letter) files under that item, never beside it.

@@ -1,5 +1,5 @@
 # Example Ops Agent: Operational Configuration
-*Stacks on top of the vault root: ../../.claude/CLAUDE.md*
+*Stacks on top of the vault root: ../../AGENTS.md*
 *Global rules (write and ask model, confidentiality, narrative drift, session protocol) live there.*
 
 ## What this agent does
@@ -23,7 +23,7 @@ ones in `items/done/`, and `items/board.md` lists them with one line each. When 
 update the board in the same step.
 
 ## Session additions
-<Optional extra steps for /session-start and /session-end in this agent. Delete if none.>
+<Optional extra steps for session-start and session-end in this agent. Delete if none.>
 
 ## What does NOT belong here
 Current status and item outcomes. Those live in the dashboard and item records.

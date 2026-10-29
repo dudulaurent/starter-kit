@@ -1,10 +1,11 @@
 ---
+name: session-end
 description: State-write sequence. Run at the end of every session before closing.
 ---
 
-# /session-end
+# session-end
 
-Read `.claude/session-context.md` for this vault's nouns and paths. Concurrency safety is
+Read `vault-config/session-context.md` for this vault's nouns and paths. Concurrency safety is
 always on, because a session cannot tell whether a second one is running.
 
 ## Step 1: Fetch before assuming
@@ -12,7 +13,7 @@ Run `git fetch` and `git status --branch`. Another session may have landed work,
 branch may not be the one this session started on.
 
 ## Step 2: Run agent-specific end steps
-In an Agent Session, run the end steps in that agent's CLAUDE.md, if any. A Root Session has
+In an Agent Session, run the end steps in that agent's AGENTS.md, if any. A Root Session has
 none: say so plainly.
 
 ## Step 3: Update the dashboard

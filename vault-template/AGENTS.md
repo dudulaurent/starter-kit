@@ -1,4 +1,4 @@
-# Vault: Root Agent Configuration
+# Vault: Root Instructions
 
 ## What this is
 This is <OWNER NAME>'s personal Obsidian vault, used as a persistent wiki and knowledge base.
@@ -9,13 +9,13 @@ The vault is designed to host several agents, each with its own folder under `ag
 
 ## Active agents
 <!-- One line per agent. Add a line when you create an agent, remove it when you retire one. -->
-→ Example ops agent: [[agents/example-ops-agent/.claude/CLAUDE.md]]
+→ Example ops agent: [[agents/example-ops-agent/AGENTS.md]]
 
 ## Identity
 → Who the owner is, values and background: [[me/identity.md]]
 → Experience and achievements: [[me/profile.md]]
 → Working preferences: [[me/preferences.md]]
-@../me/identity.md
+At the start of every session, read `me/identity.md` before anything else.
 
 ## Vault map
 → Which agents are active and what blocks: [[dashboard.md]] (an index only)
@@ -26,8 +26,10 @@ The vault is designed to host several agents, each with its own folder under `ag
 → Immutable source documents: `agents/[name]/raw/`
 
 ## Rules
-→ Communication style and voice: [[.claude/rules/communication-style.md]]
-@rules/communication-style.md
+→ Communication style and voice: [[vault-config/rules/communication-style.md]]
+At the start of every session, read `vault-config/rules/communication-style.md` and follow it
+in every reply and every file you write. Keep sessions short: the voice rules are read once
+and fade in a long conversation, so start a fresh session when a session grows long.
 
 ## Global behavioral rules
 
@@ -45,11 +47,11 @@ When what the owner says in conversation differs from `me/` or an agent's narrat
 ask a question instead of silently updating.
 
 ### Session start (all agents)
-Run `/session-start`. The sequence is in `.claude/commands/session-start.md`. This vault's
-nouns and paths are in `.claude/session-context.md`.
+Run the `session-start` skill. This vault's nouns and paths are in
+`vault-config/session-context.md`.
 
 ### Session end (all agents)
-Run `/session-end`. The sequence is in `.claude/commands/session-end.md`.
+Run the `session-end` skill.
 
 ### Brainstorming and new features
 Before building a new agent, project or large feature, run the `grill-with-docs` skill. It
@@ -58,7 +60,7 @@ challenges the plan against the vault's vocabulary and past decisions before any
 ### Pattern propagation
 When you notice a habit in one agent that could help the others, tell the owner and propose a
 scope (Vault, Code or Ops). Write it to `wiki/patterns.md` only after an explicit yes.
-Run `/lint-vault` weekly from a Root Session to review pending patterns.
+Run the `lint-vault` skill weekly from a Root Session to review pending patterns.
 
 ### Concurrent sessions
 Two sessions can run at once. Each session works on its own branch, stages explicit file paths

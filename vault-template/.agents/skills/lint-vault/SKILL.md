@@ -1,8 +1,9 @@
 ---
+name: lint-vault
 description: Weekly vault health check and pattern propagation. Root Session only.
 ---
 
-# /lint-vault
+# lint-vault
 
 Run weekly from a Root Session. Do not run from an Agent Session. It writes nothing without
 the owner's approval for each step.
@@ -23,7 +24,8 @@ the owner's approval for each step.
 
 ## Phase: index freshness
 Check that the root `dashboard.md` lists every folder in `agents/` that is active, and that
-`.claude/CLAUDE.md` "Active agents" and `.claude/session-context.md` agree with it.
+`AGENTS.md` "Active agents" and `vault-config/session-context.md` agree with it. Check that each
+folder holding an `AGENTS.md` also has a `CLAUDE.md` containing only `@AGENTS.md`.
 
 ## Rules
 Never write without a per-step yes. Deprecated patterns move to the Archive section at the

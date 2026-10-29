@@ -10,9 +10,15 @@ The root workspace. Contains all Agents, the Vault index and the shared configur
 _Avoid_: Repo, workspace
 
 **Agent**:
-A named configuration with one domain and purpose, with its own CLAUDE.md, wiki, dashboard and
+A named configuration with one domain and purpose, with its own instruction file, wiki, dashboard and
 threads. Reports state to its own dashboard and `last-session.md`.
 _Avoid_: Project (ambiguous), bot
+
+**Instruction file**:
+The one file holding the rules for the Vault or for one Agent, loaded by the AI tool on its own.
+An Agent's instruction file stacks on top of the Vault's. It points to the owner's identity and
+voice files and does not copy them.
+_Avoid_: Config, prompt, rules file
 
 **Wiki**:
 The structured knowledge base inside one Agent: a navigation hub, reference files, decisions.
@@ -27,8 +33,8 @@ The root `dashboard.md`. A thin list of active Agents and anything blocking.
 _Avoid_: Master dashboard
 
 **Session**:
-One Claude Code conversation with a start routine (`/session-start`) and an end routine
-(`/session-end`). Scoped to one Agent (Agent Session) or the vault root (Root Session).
+One conversation with an AI coding agent, with a start routine (`session-start`) and an end
+routine (`session-end`). Scoped to one Agent (Agent Session) or the vault root (Root Session).
 
 **Work item**:
 The unit of work an Agent tracks. Each Agent names it (Ticket, Application, Task). Its record
@@ -47,8 +53,12 @@ A habit or convention that proved useful in one Agent and may help others. Propo
 owner, recorded in `wiki/patterns.md` only after approval.
 
 **Command / Skill**:
-A Command is typed by the owner (`/session-start`). A Skill is picked up by the agent when the
-task matches (`grill-with-docs`).
+Both are skills in the tools' own terms. A Command is a named routine the owner can start by
+typing its name (`session-start`). The agent may start it too when the vault's instructions tell
+it to. A Skill is a helper the agent picks up when the task matches (`grill-with-docs`).
+_Avoid_: Describing a Command as something only the owner can start
 
 ## Flagged ambiguities
-None yet. Record here any term that was used two ways and how it was resolved.
+- "Command" was used to mean "only the owner can start it". Resolved: it means a named routine
+  the owner can type, and the agent may start it as well. Who may start a skill is a setting on
+  that skill, not a separate kind of thing.

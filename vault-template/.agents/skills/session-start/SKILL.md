@@ -1,10 +1,12 @@
 ---
+name: session-start
 description: Context-loading sequence. Run before any other work in a session.
 ---
 
-# /session-start
+# session-start
 
-Run before any other work. Read `.claude/session-context.md` first for this vault's nouns and paths.
+Run before any other work. Read `vault-config/session-context.md` first for this vault's nouns and paths,
+then `me/identity.md` and `vault-config/rules/communication-style.md`.
 
 ## Step 1: Detect session type
 - **Agent Session**: the working directory is inside `agents/[name]/`.
@@ -37,7 +39,7 @@ done
 Scan `threads/active/` and `items/active/`. Note anything overdue or blocking.
 
 ## Step 6: Run agent-specific start checks
-If the agent's CLAUDE.md defines any under "Session additions", run them. Root Sessions skip this.
+If the agent's AGENTS.md defines any under "Session additions", run them. Root Sessions skip this.
 
 ## Step 7: Confirm
 Print a short summary: session type and agent, active priorities from the dashboard, open

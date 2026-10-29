@@ -102,7 +102,7 @@ ol.num li{margin-bottom:8px}
 <div class="wrap">
 <header>
   <h1>Vault Guide</h1>
-  <p class="sub">How a personal knowledge vault is built, folder by folder, and how the pieces link. A vault is a folder of markdown files that Claude Code maintains for you. Nothing in this page is personal: the example agents are invented.</p>
+  <p class="sub">How a personal knowledge vault is built, folder by folder, and how the pieces link. A vault is a folder of markdown files that an AI coding agent (Claude Code or Codex) maintains for you. Nothing in this page is personal: the example agents are invented.</p>
 </header>
 
 <nav role="tablist" aria-label="Views">
@@ -164,10 +164,10 @@ ol.num li{margin-bottom:8px}
 
   <h3 class="sec">The five ideas that hold it together</h3>
   <ol class="steps">
-    <li><b>Files, not memory</b>Claude does not remember yesterday. The vault is its memory: every session reads files at the start and writes files at the end.</li>
-    <li><b>One folder, one job</b>Each agent has a single purpose and its own instructions. Opening Claude in that folder is what makes it play that role.</li>
+    <li><b>Files, not memory</b>The agent does not remember yesterday. The vault is its memory: every session reads files at the start and writes files at the end.</li>
+    <li><b>One folder, one job</b>Each agent has a single purpose and its own instructions. Opening the agent in that folder is what makes it play that role.</li>
     <li><b>Three homes for facts</b>About one item, true right now, or a lesson that held twice. Each goes to a different file and none of them grows forever.</li>
-    <li><b>Claude writes, you talk</b>You describe, decide and approve. Claude edits the files. The most important files change only after your yes.</li>
+    <li><b>The agent writes, you talk</b>You describe, decide and approve. The agent edits the files. The most important files change only after your yes.</li>
     <li><b>Question before building</b>Anything new is first challenged against your own vocabulary and past decisions, so the vault stays consistent as it grows.</li>
   </ol>
 </section>
@@ -179,13 +179,14 @@ ol.num li{margin-bottom:8px}
 
   <h3 class="sec">The vault root</h3>
 <pre class="tree"><b>vault/</b>
-├── <b>.claude/</b>                       <i>configuration Claude loads automatically</i>
-│   ├── CLAUDE.md                 <i>root rules, in every session</i>
+├── <b>AGENTS.md</b>                      <i>root rules, in every session</i>
+├── CLAUDE.md                     <i>one line, "@AGENTS.md", for Claude Code</i>
+├── <b>vault-config/</b>                  <i>shared files read by the routines</i>
 │   ├── session-context.md        <i>nouns and paths for start and end routines</i>
 │   ├── grill-context.md          <i>where glossary and decisions live</i>
-│   ├── rules/                    <i>always-on rules, for example voice</i>
-│   ├── commands/                 <i>/session-start  /session-end  /lint-vault</i>
-│   └── skills/                   <i>grill-with-docs and any others</i>
+│   └── rules/                    <i>always-on rules, for example voice</i>
+├── <b>.claude/skills/</b>                <i>session-start  session-end  lint-vault  grill-with-docs</i>
+├── <b>.agents/skills/</b>                <i>the same four skills, same text, for Codex</i>
 ├── <b>me/</b>                            <i>the owner: identity, profile, preferences</i>
 ├── <b>agents/</b>                        <i>one sub-folder per agent</i>
 ├── <b>wiki/</b>                          <i>vault-wide vocabulary, decisions, pattern registry</i>
@@ -199,18 +200,18 @@ ol.num li{margin-bottom:8px}
 └── last-session.md               <i>continuity for root sessions</i></pre>
 
   <div class="grid" style="margin-top:14px">
-    <article class="card"><h3>.claude/CLAUDE.md</h3><span class="kind">Loaded every session</span>
+    <article class="card"><h3>AGENTS.md</h3><span class="kind">Loaded every session</span>
       <p>The constitution. Says what the vault is, which agents are active, where identity lives, and the behaviour rules that bind everyone: the agent writes and the human talks, confidentiality, ask before changing major files, question new ideas first.</p>
       <dl><dt>Written</dt><dd>Rarely, with your yes</dd><dt>Keep out</dt><dd>Anything that changes weekly</dd></dl></article>
-    <article class="card"><h3>session-context.md</h3><span class="kind">Read by start and end</span>
+    <article class="card"><h3>vault-config/session-context.md</h3><span class="kind">Read by start and end</span>
       <p>Lets two generic routines serve your vault. It says what you call a work item, where boards and dashboards live, and what extra checks to run.</p>
       <dl><dt>Written</dt><dd>When you add an agent or change a name</dd></dl></article>
-    <article class="card"><h3>commands/</h3><span class="kind">You type them</span>
-      <p><code>/session-start</code> loads state. <code>/session-end</code> saves it. <code>/lint-vault</code> is the weekly health check and the gate for spreading patterns.</p>
+    <article class="card"><h3>Routines</h3><span class="kind">You type them, the agent can too</span>
+      <p><code>session-start</code> loads state. <code>session-end</code> saves it. <code>lint-vault</code> is the weekly health check and the gate for spreading patterns. Type <code>/session-start</code> in Claude Code or <code>$session-start</code> in Codex.</p>
       <dl><dt>Written</dt><dd>Rarely, when a routine falls short</dd></dl></article>
-    <article class="card"><h3>skills/</h3><span class="kind">Claude picks them</span>
-      <p>Reusable ways of working that Claude applies when the task matches. <code>grill-with-docs</code> is the first one: it interviews you before anything new is built.</p>
-      <dl><dt>Difference</dt><dd>A command is typed by you, a skill is chosen by Claude</dd></dl></article>
+    <article class="card"><h3>Skills folders</h3><span class="kind">One copy per tool</span>
+      <p>Reusable ways of working that the agent applies when the task matches. <code>grill-with-docs</code> is the first one: it interviews you before anything new is built.</p>
+      <dl><dt>Difference</dt><dd>A command is a routine you can type by name, a skill is a helper the agent picks. Both are skills in the tools. Each tool reads its own folder, so the files exist twice</dd></dl></article>
     <article class="card"><h3>me/</h3><span class="kind">Source of truth about you</span>
       <p><code>identity.md</code> holds background and values. <code>profile.md</code> holds experience with evidence, the base for any CV or bio. <code>preferences.md</code> holds how you like to work.</p>
       <dl><dt>Written</dt><dd>Only after your explicit yes</dd></dl></article>
@@ -227,7 +228,7 @@ ol.num li{margin-bottom:8px}
 
   <h3 class="sec">Inside one agent</h3>
 <pre class="tree"><b>agents/job-search/</b>
-├── <b>.claude/CLAUDE.md</b>             <i>the agent's job, read-order, what a work item is called</i>
+├── <b>AGENTS.md</b> + CLAUDE.md        <i>the agent's job, read-order, what a work item is called</i>
 ├── dashboard.md                 <i>live state only, a few lines per item</i>
 ├── last-session.md              <i>summary and next priorities, overwritten</i>
 ├── <b>items/</b>                        <i>work items (often named tickets or applications)</i>
@@ -247,7 +248,7 @@ ol.num li{margin-bottom:8px}
   <table>
     <thead><tr><th>File</th><th>Answers the question</th><th>Written when</th></tr></thead>
     <tbody>
-      <tr><td>.claude/CLAUDE.md</td><td>What is my job and what do I read first?</td><td>Rarely</td></tr>
+      <tr><td>AGENTS.md</td><td>What is my job and what do I read first?</td><td>Rarely</td></tr>
       <tr><td>dashboard.md</td><td>What is the state right now?</td><td>Each session end, trimmed</td></tr>
       <tr><td>last-session.md</td><td>Where did we stop?</td><td>Each session end, overwritten</td></tr>
       <tr><td>items/active, done</td><td>What happened with this one item?</td><td>As the item moves</td></tr>
@@ -265,15 +266,15 @@ ol.num li{margin-bottom:8px}
 <!-- LINKS -->
 <section class="view" id="links" role="tabpanel" aria-labelledby="tab-links">
   <h2>How it is linked</h2>
-  <p class="lead">Three kinds of link make the vault hang together: instructions that stack, files that every agent reads, and wiki links that connect notes. Nothing is automatic except the loading of instruction files. Everything else is a rule Claude follows because a file tells it to.</p>
+  <p class="lead">Three kinds of link make the vault hang together: instructions that stack, files that every agent reads, and wiki links that connect notes. Nothing is automatic except the loading of instruction files. Everything else is a rule the agent follows because a file tells it to.</p>
 
   <figure>
     <div class="scroll">
-    <svg viewBox="0 0 940 400" role="img" aria-label="Instruction stacking: root CLAUDE.md loads rules and identity, an agent CLAUDE.md stacks on top, and the agent reads its own dashboard, last session, threads, items and wiki, while shared identity is read from me.">
+    <svg viewBox="0 0 940 400" role="img" aria-label="Instruction stacking: root AGENTS.md loads the rules, an agent AGENTS.md stacks on top, and the agent reads its own dashboard, last session, threads, items and wiki, while shared identity is read from me.">
       <defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor" opacity=".55"/></marker></defs>
       <text class="lab" x="20" y="30">VAULT LEVEL</text>
       <rect class="b-vault" x="20" y="44" width="230" height="64" rx="9"/>
-      <text class="tw" x="36" y="72" style="font-size:15px">root CLAUDE.md</text><text x="36" y="92" font-size="12" fill="var(--bg)">loaded in every session</text>
+      <text class="tw" x="36" y="72" style="font-size:15px">root AGENTS.md</text><text x="36" y="92" font-size="12" fill="var(--bg)">loaded in every session</text>
       <rect class="b-plain" x="330" y="44" width="260" height="64" rx="9"/>
       <text class="t" x="344" y="70">rules/communication-style.md</text><text class="t2" x="344" y="90">voice, pulled in by the @ import</text>
       <rect class="b-plain" x="670" y="44" width="250" height="64" rx="9"/>
@@ -283,7 +284,7 @@ ol.num li{margin-bottom:8px}
 
       <text class="lab" x="20" y="164">AGENT LEVEL</text>
       <rect class="b-agent" x="20" y="178" width="230" height="64" rx="9"/>
-      <text class="t" x="36" y="204">agent CLAUDE.md</text><text class="t2" x="36" y="224">stacks on top of the root</text>
+      <text class="t" x="36" y="204">agent AGENTS.md</text><text class="t2" x="36" y="224">stacks on top of the root</text>
       <path class="edge" d="M135 108 L135 178" marker-end="url(#ar3)"/>
       <text class="lab" x="145" y="148">root rules still apply</text>
 
@@ -303,17 +304,17 @@ ol.num li{margin-bottom:8px}
       <path class="edge dash" d="M250 200 C300 130 700 130 740 190" marker-end="url(#ar3)"/>
     </svg>
     </div>
-    <figcaption>Opening Claude inside an agent folder loads the agent's CLAUDE.md on top of the root one. The agent's own files are its working set. The vault-level files are the shared base.</figcaption>
+    <figcaption>Opening the agent inside an agent folder loads that folder's AGENTS.md on top of the root one. The agent's own files are its working set. The vault-level files are the shared base.</figcaption>
   </figure>
 
   <h3 class="sec">The three kinds of link</h3>
   <div class="grid">
     <article class="card"><h3>Instruction stacking</h3><span class="kind">Automatic</span>
-      <p>Claude Code loads <code>.claude/CLAUDE.md</code> from the folder you open and from every parent folder. So an agent folder gets its own rules plus the root rules. A line starting with <code>@</code> imports another file into the instructions, which is how identity and voice reach every agent.</p></article>
-    <article class="card"><h3>Read-order links</h3><span class="kind">Written as arrows in CLAUDE.md</span>
-      <p>The agent's CLAUDE.md lists what to read and where, for example identity, dashboard, last session, threads. These are plain relative paths. They are instructions, so Claude follows them rather than the computer enforcing them.</p></article>
-    <article class="card"><h3>Wiki links</h3><span class="kind">For you and for Claude</span>
-      <p>Notes link to each other with double brackets, for example <code>[[patterns]]</code>. Obsidian turns them into clickable links and a graph. Claude uses them to find related notes. Every wiki file should be linked from the agent's hub, or it becomes an orphan nobody reads.</p></article>
+      <p>Codex loads <code>AGENTS.md</code> from the project root down to the folder you open. Claude Code loads <code>CLAUDE.md</code> the same way, and each one-line <code>CLAUDE.md</code> forwards to its <code>AGENTS.md</code>. So an agent folder gets its own rules plus the root rules. Identity and voice reach every agent because the root file tells the agent to read them at the start of each session.</p></article>
+    <article class="card"><h3>Read-order links</h3><span class="kind">Written as arrows in AGENTS.md</span>
+      <p>The agent's AGENTS.md lists what to read and where, for example identity, dashboard, last session, threads. These are plain relative paths. They are instructions, so the agent follows them rather than the computer enforcing them.</p></article>
+    <article class="card"><h3>Wiki links</h3><span class="kind">For you and for the agent</span>
+      <p>Notes link to each other with double brackets, for example <code>[[patterns]]</code>. Obsidian turns them into clickable links and a graph. The agent uses them to find related notes. Every wiki file should be linked from the agent's hub, or it becomes an orphan nobody reads.</p></article>
   </div>
 
   <h3 class="sec">Who may write what</h3>
@@ -322,8 +323,8 @@ ol.num li{margin-bottom:8px}
     <tbody>
       <tr><td>Agent session</td><td>Its own dashboard, last session, items, threads, wiki</td><td>Another agent's files, the root index unless vault state changed</td></tr>
       <tr><td>Root session</td><td>Root index, vault wiki, pattern registry, new agents</td><td>An agent's items or threads</td></tr>
-      <tr><td>Claude, any session</td><td>Everything above for its scope, after asking where needed</td><td>me/ files and CLAUDE.md files without your yes</td></tr>
-      <tr><td>You</td><td>Nothing directly. You talk and approve</td><td>(by design, Claude is the only editor)</td></tr>
+      <tr><td>The agent, any session</td><td>Everything above for its scope, after asking where needed</td><td>me/ files and AGENTS.md files without your yes</td></tr>
+      <tr><td>You</td><td>Nothing directly. You talk and approve</td><td>(by design, the agent is the only editor)</td></tr>
     </tbody>
   </table>
 
@@ -345,11 +346,11 @@ ol.num li{margin-bottom:8px}
     <svg viewBox="0 0 940 230" role="img" aria-label="Session flow from start to work to end, with an approval gate under the work step.">
       <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor" opacity=".55"/></marker></defs>
       <rect class="b-agent" x="10" y="60" width="250" height="100" rx="10"/>
-      <text class="t" x="26" y="88">1. Start</text><text class="t2" x="26" y="108">/session-start</text><text class="t2" x="26" y="126">loads index, dashboard,</text><text class="t2" x="26" y="142">last session, threads</text>
+      <text class="t" x="26" y="88">1. Start</text><text class="t2" x="26" y="108">session-start</text><text class="t2" x="26" y="126">loads index, dashboard,</text><text class="t2" x="26" y="142">last session, threads</text>
       <rect class="b-plain" x="345" y="60" width="250" height="100" rx="10"/>
-      <text class="t" x="361" y="88">2. Work</text><text class="t2" x="361" y="108">you describe, Claude asks,</text><text class="t2" x="361" y="126">you answer, Claude writes.</text><text class="t2" x="361" y="142">New idea? grill first</text>
+      <text class="t" x="361" y="88">2. Work</text><text class="t2" x="361" y="108">you describe, the agent asks,</text><text class="t2" x="361" y="126">you answer, the agent writes.</text><text class="t2" x="361" y="142">New idea? grill first</text>
       <rect class="b-agent" x="680" y="60" width="250" height="100" rx="10"/>
-      <text class="t" x="696" y="88">3. End</text><text class="t2" x="696" y="108">/session-end</text><text class="t2" x="696" y="126">saves facts to their home,</text><text class="t2" x="696" y="142">commits on its own branch</text>
+      <text class="t" x="696" y="88">3. End</text><text class="t2" x="696" y="108">session-end</text><text class="t2" x="696" y="126">saves facts to their home,</text><text class="t2" x="696" y="142">commits on its own branch</text>
       <path class="edge" d="M260 110 L345 110" marker-end="url(#ar2)"/>
       <path class="edge" d="M595 110 L680 110" marker-end="url(#ar2)"/>
       <rect class="b-fw" x="345" y="182" width="250" height="38" rx="8"/>
@@ -358,21 +359,21 @@ ol.num li{margin-bottom:8px}
       <text class="lab" x="610" y="206">big files, patterns, story drift</text>
     </svg>
     </div>
-    <figcaption>Claude stops and waits for a yes only at the orange box.</figcaption>
+    <figcaption>The agent stops and waits for a yes only at the orange box.</figcaption>
   </figure>
 
-  <h3 class="sec">What /session-start does</h3>
+  <h3 class="sec">What session-start does</h3>
   <ol class="num">
     <li><b>Detects the session type.</b> Inside an agent folder it is an Agent Session. At the vault root it is a Root Session.</li>
     <li><b>Loads state.</b> The vault index, then the agent's dashboard, last session, patterns and item board. It never reads another agent's dashboard.</li>
-    <li><b>Reconciles.</b> Runs <code>git fetch</code> and looks at recent changes. If you or a second session edited agent files since last time, Claude reads them before writing anything. It also lists branches that hold finished but unmerged work.</li>
+    <li><b>Reconciles.</b> Runs <code>git fetch</code> and looks at recent changes. If you or a second session edited agent files since last time, the agent reads them before writing anything. It also lists branches that hold finished but unmerged work.</li>
     <li><b>Loads the wiki hub</b> so it knows what knowledge exists.</li>
     <li><b>Scans threads and items</b> for anything overdue or blocking.</li>
-    <li><b>Runs agent-specific checks</b> if the agent's CLAUDE.md defines some.</li>
+    <li><b>Runs agent-specific checks</b> if the agent's AGENTS.md defines some.</li>
     <li><b>Prints a short summary</b> and does no other work until you read it.</li>
   </ol>
 
-  <h3 class="sec">What /session-end does</h3>
+  <h3 class="sec">What session-end does</h3>
   <ol class="num">
     <li><b>Fetches again</b> to see what other sessions landed.</li>
     <li><b>Runs the agent's own end steps.</b></li>
@@ -385,11 +386,11 @@ ol.num li{margin-bottom:8px}
     <li><b>Confirms</b> which files changed, so you can verify without opening each one.</li>
   </ol>
 
-  <h3 class="sec">When Claude must ask before writing</h3>
+  <h3 class="sec">When the agent must ask before writing</h3>
   <ol class="steps">
-    <li class="gate"><b>Major files</b>Root CLAUDE.md, me/profile.md and me/identity.md. Claude shows the exact change first.</li>
+    <li class="gate"><b>Major files</b>Root AGENTS.md, me/profile.md and me/identity.md. The agent shows the exact change first.</li>
     <li class="gate"><b>Patterns</b>A habit that could help other agents is proposed to you. Only after your yes does it enter the registry.</li>
-    <li class="gate"><b>Story drift</b>If what you say differs from your saved story, Claude asks instead of quietly updating.</li>
+    <li class="gate"><b>Story drift</b>If what you say differs from your saved story, The agent asks instead of quietly updating.</li>
     <li class="gate"><b>Main branch</b>Nothing is merged or pushed to main without your explicit yes in that session.</li>
   </ol>
 
@@ -404,7 +405,7 @@ ol.num li{margin-bottom:8px}
   <div class="grid">
     <article class="card"><span class="kind">First</span><h3>An ops agent</h3><span class="pill p-ops">no code</span>
       <p>An agent that works through notes, skills and commands only. A job search, a reading list, a research topic, a business log. Its work item is whatever you track: an application, a paper, a client.</p>
-      <dl><dt>Needs</dt><dd>CLAUDE.md, dashboard, items, threads, wiki</dd><dt>Created by</dt><dd>A grill session at the vault root</dd></dl></article>
+      <dl><dt>Needs</dt><dd>AGENTS.md, dashboard, items, threads, wiki</dd><dt>Created by</dt><dd>A grill session at the vault root</dd></dl></article>
     <article class="card"><span class="kind">Second</span><h3>A code agent</h3><span class="pill p-code">owns software</span>
       <p>An agent that builds and maintains an application. Adds a tickets board, a build-context file and a build routine split into roles, so design, building and testing are separate steps with separate mindsets.</p>
       <dl><dt>Roles</dt><dd>UX, UI design, architect, developer, infrastructure, quality check</dd><dt>Work item</dt><dd>Ticket</dd></dl></article>
@@ -412,10 +413,10 @@ ol.num li{margin-bottom:8px}
       <p>A project that pushes to its own remote lives beside the vault, not inside it. The test is mechanical. The vault index lists it and points to it, and never loads its dashboard.</p>
       <dl><dt>Why</dt><dd>Keeps each repo small and keeps private material out of public ones</dd></dl></article>
     <article class="card"><span class="kind">When two repos share routines</span><h3>A shared framework</h3><span class="pill p-fw">plugins</span>
-      <p>A separate repository packaged as Claude Code plugins. One layer holds identity-free mechanics (session routines, build roles). A second layer holds what is personal (your voice, your story). Projects install the layers they need.</p>
+      <p>A separate repository packaged as plugins for your tool. One layer holds identity-free mechanics (session routines, build roles). A second layer holds what is personal (your voice, your story). Projects install the layers they need.</p>
       <dl><dt>Test for the split</dt><dd>Would this file read identically for another person? Then it is identity-free</dd></dl></article>
     <article class="card"><span class="kind">When habits are stable</span><h3>Guards</h3><span class="pill p-fw">hooks</span>
-      <p>Small programs that run before an action and refuse it if it breaks a mechanical rule, for example pushing to main or staging every file at once. A written rule relies on Claude remembering. A guard does not.</p>
+      <p>Small programs that run before an action and refuse it if it breaks a mechanical rule, for example pushing to main or staging every file at once. A written rule relies on the agent remembering. A guard does not.</p>
       <dl><dt>Fail style</dt><dd>Closed for actions hard to undo, open with a warning for reversible ones</dd></dl></article>
     <article class="card"><span class="kind">When the vault is big</span><h3>An atlas page</h3><span class="pill p-ops">optional</span>
       <p>One standalone HTML file that draws the structure so a newcomer, or you in six months, can see it at once. Structure only: no private content, no figures, no outcomes.</p>
@@ -434,7 +435,7 @@ ol.num li{margin-bottom:8px}
 <!-- KNOWLEDGE -->
 <section class="view" id="know" role="tabpanel" aria-labelledby="tab-know">
   <h2>Words and decisions</h2>
-  <p class="lead">The vocabulary the vault uses, and the design choices behind its shape. Reuse the words as they are. A shared vocabulary is what lets Claude and you mean the same thing.</p>
+  <p class="lead">The vocabulary the vault uses, and the design choices behind its shape. Reuse the words as they are. A shared vocabulary is what lets the agent and you mean the same thing.</p>
 
   <h3 class="sec">Design choices and the reason for each</h3>
   <div class="grid">
@@ -457,14 +458,14 @@ ol.num li{margin-bottom:8px}
   <input type="search" id="q" placeholder="Filter words" aria-label="Filter vocabulary">
   <div id="gloss">
     <details><summary>Vault</summary><p>The root folder holding all agents, shared rules and the owner's identity files.</p></details>
-    <details><summary>Agent</summary><p>A named area inside the vault with one job, its own CLAUDE.md, wiki, dashboard and threads.</p></details>
+    <details><summary>Agent</summary><p>A named area inside the vault with one job, its own AGENTS.md, wiki, dashboard and threads.</p></details>
     <details><summary>Ops agent</summary><p>An agent with no code. Works through notes, skills and commands.</p></details>
     <details><summary>Code agent</summary><p>An agent that owns software and uses tickets and a build routine with separate roles.</p></details>
-    <details><summary>Root session</summary><p>Claude opened at the vault root. For vault-wide work such as adding an agent or running the weekly lint.</p></details>
-    <details><summary>Agent session</summary><p>Claude opened inside one agent folder. It sees that agent's domain plus the shared rules.</p></details>
-    <details><summary>CLAUDE.md</summary><p>An instruction file Claude loads automatically from the folder it is opened in and from parent folders.</p></details>
-    <details><summary>Command</summary><p>A routine you trigger by typing a slash name, such as /session-start.</p></details>
-    <details><summary>Skill</summary><p>A reusable way of working that Claude chooses when the task matches.</p></details>
+    <details><summary>Root session</summary><p>The agent opened at the vault root. For vault-wide work such as adding an agent or running the weekly lint.</p></details>
+    <details><summary>Agent session</summary><p>The agent opened inside one agent folder. It sees that agent's domain plus the shared rules.</p></details>
+    <details><summary>Instruction file</summary><p>The file holding the rules for the vault or one agent, loaded by the tool on its own: <code>AGENTS.md</code>, with a one-line <code>CLAUDE.md</code> beside it for Claude Code.</p></details>
+    <details><summary>Command</summary><p>A named routine you can start by typing its name, such as session-start. The agent may start it too.</p></details>
+    <details><summary>Skill</summary><p>A reusable way of working that the agent chooses when the task matches.</p></details>
     <details><summary>Rule</summary><p>An always-on instruction file, such as the voice guide.</p></details>
     <details><summary>Wiki</summary><p>The structured notes inside one agent: a hub page, reference files and decisions.</p></details>
     <details><summary>Dashboard</summary><p>One file per agent showing only what is true right now.</p></details>
@@ -477,7 +478,7 @@ ol.num li{margin-bottom:8px}
     <details><summary>CONTEXT.md</summary><p>The glossary. Words only, no implementation detail.</p></details>
     <details><summary>ADR</summary><p>Architecture decision record. One short file explaining a hard-to-reverse choice, why it was made and what it costs.</p></details>
     <details><summary>Raw</summary><p>Source documents stored as received and never edited afterwards.</p></details>
-    <details><summary>Narrative drift</summary><p>When what you say now differs from what the vault holds about you. Claude asks before changing the saved version.</p></details>
+    <details><summary>Narrative drift</summary><p>When what you say now differs from what the vault holds about you. The agent asks before changing the saved version.</p></details>
     <details><summary>Peer project</summary><p>A project with its own repository placed beside the vault. The vault points to it and never loads it.</p></details>
     <details><summary>Plugin</summary><p>A packaged set of commands, roles and rules that can be installed in several projects.</p></details>
     <details><summary>Guard</summary><p>A hook that blocks a mechanical rule break before it happens.</p></details>
@@ -492,10 +493,10 @@ ol.num li{margin-bottom:8px}
   <p class="lead">Two ways to the same vault. Pick the one that fits how you like to work.</p>
   <div class="grid">
     <article class="card"><span class="kind">Path A</span><h3>Template folder</h3><span class="pill p-ops">faster</span>
-      <p>Copy the <code>vault-template/</code> folder, run <code>git init</code>, open Claude Code in it and let Claude walk you through each placeholder, one question at a time. You get the full skeleton at once and fill it in.</p>
+      <p>Copy the <code>vault-template/</code> folder, run <code>git init</code>, open Claude Code or Codex in it and let the agent walk you through each placeholder, one question at a time. You get the full skeleton at once and fill it in.</p>
       <dl><dt>Good if</dt><dd>You already know what the vault is for</dd><dt>Time</dt><dd>One sitting for the skeleton, then daily use</dd></dl></article>
     <article class="card"><span class="kind">Path B</span><h3>Staged setup guide</h3><span class="pill p-code">guided</span>
-      <p>Give <code>SETUP.md</code> to Claude in an empty folder. It interviews you and builds in seven stages, keeping a progress file so you can stop and resume in later sessions.</p>
+      <p>Give <code>SETUP.md</code> to your agent in an empty folder. It interviews you and builds in seven stages, keeping a progress file so you can stop and resume in later sessions.</p>
       <dl><dt>Good if</dt><dd>You would rather be interviewed than edit templates</dd><dt>Time</dt><dd>Several short sittings</dd></dl></article>
   </div>
   <h3 class="sec">The seven stages of Path B</h3>
@@ -504,7 +505,7 @@ ol.num li{margin-bottom:8px}
     <li><b>1 Identity</b>The three me/ files and your voice rules.</li>
     <li><b>2 Skeleton</b>Folders, root rules, session commands, glossary.</li>
     <li><b>3 First agent</b>A grill session, then the agent folder.</li>
-    <li><b>4 Prove the loop</b>Real work, then /session-end, then inspect.</li>
+    <li><b>4 Prove the loop</b>Real work, then session-end, then inspect.</li>
     <li><b>5 Grow</b>More agents, code agent, peers, framework, guards.</li>
     <li><b>6 Share</b>Optional atlas page, structure only.</li>
   </ol>
